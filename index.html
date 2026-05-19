@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#166534" />
+    <title>場地資料系統</title>
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div id="app" class="shell">
+      <section class="auth-view" data-view="auth">
+        <div class="brand">
+          <div class="brand-mark">場</div>
+          <div>
+            <h1>場地資料系統</h1>
+            <p>公司內部場地查詢與附件管理</p>
+          </div>
+        </div>
+
+        <form id="login-form" class="panel">
+          <label>
+            Email
+            <input id="email" type="email" autocomplete="email" required />
+          </label>
+          <label>
+            密碼
+            <input id="password" type="password" autocomplete="current-password" required />
+          </label>
+          <button type="submit">登入</button>
+          <p id="auth-message" class="message"></p>
+        </form>
+      </section>
+
+      <section class="app-view hidden" data-view="main">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">場地資料</p>
+            <h1>案場總覽</h1>
+            <p id="profile-badge" class="profile-badge"></p>
+            <p id="storage-usage" class="profile-badge"></p>
+          </div>
+          <div class="top-actions">
+            <button id="manage-users-button" class="ghost hidden" type="button">建立者管理</button>
+            <button id="logout-button" class="ghost" type="button">登出</button>
+          </div>
+        </header>
+
+        <div class="toolbar">
+          <input id="search-input" type="search" placeholder="搜尋名稱、代號、地址或業主" />
+          <button id="new-site-button" type="button">新增場地</button>
+        </div>
+
+        <main class="layout">
+          <section class="list-panel">
+            <div class="list-head">
+              <button id="back-to-owners-button" class="ghost hidden" type="button">返回建立者</button>
+              <div>
+                <p id="list-eyebrow" class="eyebrow">建立者資料庫</p>
+                <h2 id="list-title">全部建立者</h2>
+              </div>
+            </div>
+            <div id="site-list" class="site-list"></div>
+            <p id="empty-state" class="empty hidden">目前沒有可瀏覽的場地。</p>
+          </section>
+
+          <section class="detail-panel">
+            <div id="detail-empty" class="detail-empty">
+              <h2>選擇一個場地</h2>
+              <p>點選左側資料查看完整內容。</p>
+            </div>
+
+            <section id="user-admin" class="site-form hidden">
+              <div class="form-head">
+                <h2>建立者管理</h2>
+                <button id="close-users-button" class="ghost" type="button">關閉</button>
+              </div>
+              <form id="user-form" class="user-form">
+                <div class="grid">
+                  <input id="profile-id" type="hidden" />
+                  <label>
+                    名稱
+                    <input id="profile-name" required />
+                  </label>
+                  <label>
+                    Email
+                    <input id="profile-email" type="email" required />
+                  </label>
+                  <label>
+                    初始密碼
+                    <input id="profile-password" type="password" autocomplete="new-password" placeholder="新增帳號時必填，編輯時可留空" />
+                  </label>
+                  <label>
+                    角色
+                    <select id="profile-role">
+                      <option value="editor">建立者 / 編輯者</option>
+                      <option value="viewer">瀏覽者</option>
+                      <option value="admin">管理者</option>
+                    </select>
+                  </label>
+                  <label>
+                    狀態
+                    <select id="profile-active">
+                      <option value="true">啟用</option>
+                      <option value="false">停用</option>
+                    </select>
+                  </label>
+                </div>
+                <div class="form-actions">
+                  <button id="reset-user-form-button" class="ghost" type="button">清空</button>
+                  <button type="submit">儲存使用者</button>
+                </div>
+                <p id="user-message" class="message"></p>
+              </form>
+              <div id="user-list" class="user-list"></div>
+            </section>
+
+            <form id="site-form" class="site-form hidden">
+              <div class="form-head">
+                <h2 id="form-title">新增場地</h2>
+                <div class="form-actions">
+                  <button id="delete-site-button" class="icon-danger hidden" type="button">刪除場地</button>
+                  <button id="cancel-edit-button" class="ghost" type="button">取消</button>
+                </div>
+              </div>
+
+              <input id="site-id" type="hidden" />
+              <div class="grid">
+                <label>
+                  場地名稱
+                  <input id="site-name" required />
+                </label>
+                <label>
+                  場地代號
+                  <input id="site-code" required />
+                </label>
+                <label class="span-2">
+                  場地地址
+                  <input id="site-address" required />
+                </label>
+                <label>
+                  業主
+                  <select id="site-owner-select">
+                    <option value="">請選擇</option>
+                    <option value="阜爾">阜爾</option>
+                    <option value="城市車旅">城市車旅</option>
+                    <option value="__other">其他</option>
+                  </select>
+                  <input id="site-owner" class="hidden" placeholder="請輸入業主" />
+                </label>
+                <label>
+                  網路架構
+                  <select id="site-network-select">
+                    <option value="">請選擇</option>
+                    <option value="4G網卡">4G網卡</option>
+                    <option value="中華電信">中華電信</option>
+                    <option value="__other">其他</option>
+                  </select>
+                  <input id="site-phone" class="hidden" placeholder="請輸入網路架構" />
+                </label>
+                <label>
+                  入口設備數量
+                  <input id="site-entrance" type="number" min="0" value="0" />
+                </label>
+                <label>
+                  出口設備數量
+                  <input id="site-exit" type="number" min="0" value="0" />
+                </label>
+                <label>
+                  繳費機數量
+                  <input id="site-payment" type="number" min="0" value="0" />
+                </label>
+                <label class="span-2">
+                  注意事項
+                  <textarea id="site-notes" rows="4"></textarea>
+                </label>
+                <label class="span-2">
+                  備註
+                  <textarea id="site-remarks" rows="4"></textarea>
+                </label>
+              </div>
+              <button type="submit">儲存場地</button>
+              <p id="form-message" class="message"></p>
+
+              <div id="edit-attachments" class="attachments hidden">
+                <section class="attachment-section">
+                  <div class="attachment-head">
+                    <h3>照片</h3>
+                    <input id="edit-photo-upload" class="file-input" type="file" accept=".jpg,.jpeg,.png,.heic,.webp,image/*" multiple />
+                  </div>
+                  <div id="edit-photo-list"></div>
+                </section>
+                <section class="attachment-section">
+                  <div class="attachment-head">
+                    <h3>文件</h3>
+                    <input id="edit-file-upload" class="file-input" type="file" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.log,.csv,.json,.xml,.ini,.cfg,.conf,.rtf,.odt,.ods,.dwg,.dxf,.zip,.rar,.7z" multiple />
+                  </div>
+                  <div id="edit-file-list"></div>
+                </section>
+                <p id="upload-message" class="message"></p>
+              </div>
+            </form>
+
+            <article id="site-detail" class="site-detail hidden"></article>
+          </section>
+        </main>
+      </section>
+    </div>
+
+    <script type="module" src="./app.js?v=24"></script>
+  </body>
+</html>

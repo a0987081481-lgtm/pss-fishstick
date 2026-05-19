@@ -1,0 +1,12 @@
+tools/
+.supabase/
+supabase/.branches/
+supabase/.temp/
+*.tar.gz
+
+# Local scratch and one-off SQL notes
+supabase-fix-sites-insert.sql
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
