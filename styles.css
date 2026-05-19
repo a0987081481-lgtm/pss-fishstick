@@ -361,6 +361,38 @@ textarea {
   margin-bottom: 16px;
 }
 
+.vehicle-box {
+  display: grid;
+  gap: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.vehicle-box legend {
+  padding: 0 6px;
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 750;
+}
+
+.check-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  color: var(--ink);
+}
+
+.check-row input {
+  width: auto;
+}
+
+.vehicle-fields {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
 .span-2 {
   grid-column: span 2;
 }
@@ -528,7 +560,8 @@ textarea {
   }
 
   .grid,
-  .info-grid {
+  .info-grid,
+  .vehicle-fields {
     grid-template-columns: 1fr;
   }
 

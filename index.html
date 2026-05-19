@@ -159,17 +159,64 @@
                   </select>
                   <input id="site-phone" class="hidden" placeholder="請輸入網路架構" />
                 </label>
+                <fieldset class="vehicle-box span-2">
+                  <legend>車種設備</legend>
+                  <label class="check-row">
+                    <input id="site-has-car" type="checkbox" />
+                    汽車
+                  </label>
+                  <div id="car-fields" class="vehicle-fields hidden">
+                    <label>
+                      汽車入口設備數量
+                      <select id="site-car-entrance"></select>
+                    </label>
+                    <label>
+                      汽車出口設備數量
+                      <select id="site-car-exit"></select>
+                    </label>
+                    <label>
+                      汽車出口支付設備數量
+                      <select id="site-car-exit-payment"></select>
+                    </label>
+                  </div>
+                  <label class="check-row">
+                    <input id="site-has-motorcycle" type="checkbox" />
+                    機車
+                  </label>
+                  <div id="motorcycle-fields" class="vehicle-fields hidden">
+                    <label>
+                      機車入口設備數量
+                      <select id="site-motorcycle-entrance"></select>
+                    </label>
+                    <label>
+                      機車出口設備數量
+                      <select id="site-motorcycle-exit"></select>
+                    </label>
+                    <label>
+                      機車出口支付設備數量
+                      <select id="site-motorcycle-exit-payment"></select>
+                    </label>
+                  </div>
+                </fieldset>
                 <label>
                   入口設備數量
-                  <input id="site-entrance" type="number" min="0" value="0" />
+                  <input id="site-entrance" type="number" min="0" value="0" readonly />
                 </label>
                 <label>
                   出口設備數量
-                  <input id="site-exit" type="number" min="0" value="0" />
+                  <input id="site-exit" type="number" min="0" value="0" readonly />
+                </label>
+                <label>
+                  出口支付數量
+                  <input id="site-exit-payment" type="number" min="0" value="0" readonly />
                 </label>
                 <label>
                   繳費機數量
-                  <input id="site-payment" type="number" min="0" value="0" />
+                  <select id="site-payment"></select>
+                </label>
+                <label>
+                  計價電腦數量
+                  <select id="site-pricing-computer"></select>
                 </label>
                 <label class="span-2">
                   注意事項
@@ -208,6 +255,6 @@
       </section>
     </div>
 
-    <script type="module" src="./app.js?v=25"></script>
+    <script type="module" src="./app.js?v=26"></script>
   </body>
 </html>

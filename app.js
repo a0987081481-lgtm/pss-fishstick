@@ -94,6 +94,10 @@ const els = {
   editFileList: document.querySelector("#edit-file-list"),
   ownerSelect: document.querySelector("#site-owner-select"),
   networkSelect: document.querySelector("#site-network-select"),
+  hasCar: document.querySelector("#site-has-car"),
+  hasMotorcycle: document.querySelector("#site-has-motorcycle"),
+  carFields: document.querySelector("#car-fields"),
+  motorcycleFields: document.querySelector("#motorcycle-fields"),
 };
 
 const fieldIds = {
@@ -103,7 +107,15 @@ const fieldIds = {
   address: "site-address",
   entrance_device_count: "site-entrance",
   exit_device_count: "site-exit",
+  exit_payment_device_count: "site-exit-payment",
   payment_machine_count: "site-payment",
+  pricing_computer_count: "site-pricing-computer",
+  car_entrance_device_count: "site-car-entrance",
+  car_exit_device_count: "site-car-exit",
+  car_exit_payment_device_count: "site-car-exit-payment",
+  motorcycle_entrance_device_count: "site-motorcycle-entrance",
+  motorcycle_exit_device_count: "site-motorcycle-exit",
+  motorcycle_exit_payment_device_count: "site-motorcycle-exit-payment",
   notes: "site-notes",
   remarks: "site-remarks",
 };
@@ -325,9 +337,13 @@ function renderDetail() {
       ${info("建立時間", formatDateTime(site.created_at))}
       ${info("業主", site.owner_name)}
       ${info("網路架構", site.phone)}
+      ${site.has_car ? info("汽車設備", `入口 ${site.car_entrance_device_count} / 出口 ${site.car_exit_device_count} / 出口支付 ${site.car_exit_payment_device_count}`, true) : ""}
+      ${site.has_motorcycle ? info("機車設備", `入口 ${site.motorcycle_entrance_device_count} / 出口 ${site.motorcycle_exit_device_count} / 出口支付 ${site.motorcycle_exit_payment_device_count}`, true) : ""}
       ${info("入口設備數量", site.entrance_device_count)}
       ${info("出口設備數量", site.exit_device_count)}
+      ${info("出口支付數量", site.exit_payment_device_count)}
       ${info("繳費機數量", site.payment_machine_count)}
+      ${info("計價電腦數量", site.pricing_computer_count)}
       ${info("注意事項", site.notes, true)}
       ${info("備註", site.remarks, true)}
     </div>
@@ -597,12 +613,25 @@ function openForm(site = null) {
     address: "",
     owner_name: "",
     phone: "",
+    has_car: false,
+    car_entrance_device_count: 0,
+    car_exit_device_count: 0,
+    car_exit_payment_device_count: 0,
+    has_motorcycle: false,
+    motorcycle_entrance_device_count: 0,
+    motorcycle_exit_device_count: 0,
+    motorcycle_exit_payment_device_count: 0,
     entrance_device_count: 0,
     exit_device_count: 0,
+    exit_payment_device_count: 0,
     payment_machine_count: 0,
+    pricing_computer_count: 0,
     notes: "",
     remarks: "",
   };
+
+  els.hasCar.checked = Boolean(values.has_car);
+  els.hasMotorcycle.checked = Boolean(values.has_motorcycle);
 
   for (const [key, id] of Object.entries(fieldIds)) {
     $(id).value = values[key] ?? "";
@@ -610,6 +639,8 @@ function openForm(site = null) {
 
   setChoiceValue(els.ownerSelect, $("site-owner"), values.owner_name, ["阜爾", "城市車旅"]);
   setChoiceValue(els.networkSelect, $("site-phone"), values.phone, ["4G網卡", "中華電信"]);
+  syncVehicleFields();
+  updateVehicleTotals();
 
   if (site && canEdit(site)) {
     els.editPhotoList.innerHTML = renderPhotos(true);
@@ -625,12 +656,60 @@ function readForm() {
     address: $("site-address").value.trim(),
     owner_name: readChoiceValue(els.ownerSelect, $("site-owner")),
     phone: readChoiceValue(els.networkSelect, $("site-phone")),
+    has_car: els.hasCar.checked,
+    car_entrance_device_count: els.hasCar.checked ? Number($("site-car-entrance").value || 0) : 0,
+    car_exit_device_count: els.hasCar.checked ? Number($("site-car-exit").value || 0) : 0,
+    car_exit_payment_device_count: els.hasCar.checked ? Number($("site-car-exit-payment").value || 0) : 0,
+    has_motorcycle: els.hasMotorcycle.checked,
+    motorcycle_entrance_device_count: els.hasMotorcycle.checked ? Number($("site-motorcycle-entrance").value || 0) : 0,
+    motorcycle_exit_device_count: els.hasMotorcycle.checked ? Number($("site-motorcycle-exit").value || 0) : 0,
+    motorcycle_exit_payment_device_count: els.hasMotorcycle.checked ? Number($("site-motorcycle-exit-payment").value || 0) : 0,
     entrance_device_count: Number($("site-entrance").value || 0),
     exit_device_count: Number($("site-exit").value || 0),
+    exit_payment_device_count: Number($("site-exit-payment").value || 0),
     payment_machine_count: Number($("site-payment").value || 0),
+    pricing_computer_count: Number($("site-pricing-computer").value || 0),
     notes: $("site-notes").value.trim() || null,
     remarks: $("site-remarks").value.trim() || null,
   };
+}
+
+function populateCountSelects() {
+  [
+    "site-car-entrance",
+    "site-car-exit",
+    "site-car-exit-payment",
+    "site-motorcycle-entrance",
+    "site-motorcycle-exit",
+    "site-motorcycle-exit-payment",
+    "site-payment",
+    "site-pricing-computer",
+  ].forEach((id) => {
+    const select = $(id);
+    if (!select || select.options.length) return;
+    select.append(new Option("0", "0"));
+    for (let value = 1; value <= 20; value += 1) {
+      select.append(new Option(String(value), String(value)));
+    }
+  });
+}
+
+function syncVehicleFields() {
+  els.carFields.classList.toggle("hidden", !els.hasCar.checked);
+  els.motorcycleFields.classList.toggle("hidden", !els.hasMotorcycle.checked);
+}
+
+function updateVehicleTotals() {
+  const carEntrance = els.hasCar.checked ? Number($("site-car-entrance").value || 0) : 0;
+  const carExit = els.hasCar.checked ? Number($("site-car-exit").value || 0) : 0;
+  const carExitPayment = els.hasCar.checked ? Number($("site-car-exit-payment").value || 0) : 0;
+  const motorcycleEntrance = els.hasMotorcycle.checked ? Number($("site-motorcycle-entrance").value || 0) : 0;
+  const motorcycleExit = els.hasMotorcycle.checked ? Number($("site-motorcycle-exit").value || 0) : 0;
+  const motorcycleExitPayment = els.hasMotorcycle.checked ? Number($("site-motorcycle-exit-payment").value || 0) : 0;
+
+  $("site-entrance").value = carEntrance + motorcycleEntrance;
+  $("site-exit").value = carExit + motorcycleExit;
+  $("site-exit-payment").value = carExitPayment + motorcycleExitPayment;
 }
 
 function setChoiceValue(select, input, value, options) {
@@ -930,6 +1009,8 @@ function formatDateTime(value) {
 }
 
 async function init() {
+  populateCountSelects();
+
   if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register("./sw.js").catch(() => {});
   }
@@ -1014,6 +1095,22 @@ els.editFileUpload.addEventListener("change", (event) => {
 });
 els.ownerSelect.addEventListener("change", () => syncOtherInput(els.ownerSelect, $("site-owner")));
 els.networkSelect.addEventListener("change", () => syncOtherInput(els.networkSelect, $("site-phone")));
+els.hasCar.addEventListener("change", () => {
+  syncVehicleFields();
+  updateVehicleTotals();
+});
+els.hasMotorcycle.addEventListener("change", () => {
+  syncVehicleFields();
+  updateVehicleTotals();
+});
+[
+  "site-car-entrance",
+  "site-car-exit",
+  "site-car-exit-payment",
+  "site-motorcycle-entrance",
+  "site-motorcycle-exit",
+  "site-motorcycle-exit-payment",
+].forEach((id) => $(id).addEventListener("change", updateVehicleTotals));
 
 function escapeHtml(value) {
   return String(value ?? "")
