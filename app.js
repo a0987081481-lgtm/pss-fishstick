@@ -103,6 +103,7 @@ const els = {
   featureOnlinePayment: document.querySelector("#feature-online-payment"),
   featureCashOnly: document.querySelector("#feature-cash-only"),
   featureMonthlyRentOnly: document.querySelector("#feature-monthly-rent-only"),
+  mobileActionBar: document.querySelector("#mobile-action-bar"),
 };
 
 const fieldIds = {
@@ -131,10 +132,46 @@ function $(id) {
 function show(view) {
   els.authView.classList.toggle("hidden", view !== "auth");
   els.mainView.classList.toggle("hidden", view !== "main");
+  updateMobileActionBar();
 }
 
 function canEdit(site) {
   return state.profile?.role === "admin" || site.created_by === state.session?.user?.id;
+}
+
+function updateMobileActionBar() {
+  if (!els.mobileActionBar) return;
+
+  const site = state.sites.find((item) => item.id === state.selectedSiteId);
+  const isEditing = !els.siteForm.classList.contains("hidden");
+  const isViewing = Boolean(site) && !els.siteDetail.classList.contains("hidden");
+  const userAdminOpen = !els.userAdmin.classList.contains("hidden");
+  const shouldShow = state.session && !userAdminOpen && (isEditing || isViewing);
+
+  els.mobileActionBar.classList.toggle("hidden", !shouldShow);
+  els.mobileActionBar.querySelectorAll("[data-mobile-action]").forEach((button) => {
+    button.classList.add("hidden");
+  });
+
+  if (!shouldShow) return;
+
+  const showAction = (action) => {
+    els.mobileActionBar.querySelector(`[data-mobile-action="${action}"]`)?.classList.remove("hidden");
+  };
+
+  if (isEditing) {
+    showAction("save");
+    showAction("cancel");
+    if (site && canEdit(site)) {
+      showAction("photo");
+      showAction("file");
+      showAction("delete");
+    }
+    return;
+  }
+
+  showAction("back");
+  if (site && canEdit(site)) showAction("edit");
 }
 
 async function loadProfile() {
@@ -326,7 +363,10 @@ function renderDetail() {
   els.detailEmpty.classList.toggle("hidden", Boolean(site));
   els.siteDetail.classList.toggle("hidden", !site);
 
-  if (!site) return;
+  if (!site) {
+    updateMobileActionBar();
+    return;
+  }
 
   const editButton = canEdit(site)
     ? '<button id="edit-site-button" type="button">編輯場地</button>'
@@ -368,6 +408,7 @@ function renderDetail() {
   `;
 
   document.querySelector("#edit-site-button")?.addEventListener("click", () => openForm(site));
+  updateMobileActionBar();
 }
 
 function openUserAdmin() {
@@ -380,6 +421,7 @@ function openUserAdmin() {
   els.userAdmin.classList.remove("hidden");
   resetUserForm();
   renderUsers();
+  updateMobileActionBar();
 }
 
 function closeUserAdmin() {
@@ -625,6 +667,11 @@ async function withSignedUrls(items) {
 }
 
 function openForm(site = null) {
+  if (!site) {
+    state.selectedSiteId = null;
+    state.attachments = { photos: [], files: [] };
+    renderSites();
+  }
   els.detailEmpty.classList.add("hidden");
   els.siteDetail.classList.add("hidden");
   els.siteForm.classList.remove("hidden");
@@ -683,6 +730,7 @@ function openForm(site = null) {
     els.editFileList.innerHTML = renderFiles(true);
     bindDeleteButtons();
   }
+  updateMobileActionBar();
 }
 
 function readForm() {
@@ -1122,6 +1170,26 @@ els.newSiteButton.addEventListener("click", () => openForm());
 els.cancelEditButton.addEventListener("click", renderDetail);
 els.deleteSiteButton.addEventListener("click", deleteSelectedSite);
 els.siteForm.addEventListener("submit", saveSite);
+els.mobileActionBar?.addEventListener("click", (event) => {
+  const button = event.target.closest("[data-mobile-action]");
+  if (!button) return;
+
+  const site = state.sites.find((item) => item.id === state.selectedSiteId);
+  const action = button.dataset.mobileAction;
+
+  if (action === "back") {
+    state.selectedSiteId = null;
+    state.attachments = { photos: [], files: [] };
+    renderSites();
+    renderDetail();
+  }
+  if (action === "edit" && site) openForm(site);
+  if (action === "save") els.siteForm.requestSubmit();
+  if (action === "cancel") renderDetail();
+  if (action === "delete") deleteSelectedSite();
+  if (action === "photo") els.editPhotoUpload.click();
+  if (action === "file") els.editFileUpload.click();
+});
 els.editPhotoUpload.addEventListener("change", (event) => {
   const site = state.sites.find((item) => item.id === state.selectedSiteId);
   if (!site) return;
