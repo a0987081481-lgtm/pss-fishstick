@@ -1,5 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
   <rect width="512" height="512" rx="96" fill="#166534"/>
-  <path fill="#ffffff" d="M132 139h248v48H132v-48Zm0 88h248v48H132v-48Zm0 88h150v48H132v-48Z"/>
-  <circle cx="352" cy="339" r="36" fill="#5eead4"/>
+  <path fill="#5eead4" d="M96 122h320v56H96z"/>
+  <path fill="#ffffff" d="M112 216h86c58 0 96 30 96 78 0 50-38 80-96 80h-30v42h-56V216Zm82 110c27 0 42-12 42-32 0-19-15-30-42-30h-26v62h26Zm120-110h86c41 0 68 21 68 54 0 21-11 38-31 48 25 9 39 28 39 54 0 39-31 62-80 62h-82V216Zm80 82c14 0 22-7 22-19s-8-18-22-18h-26v37h26Zm4 91c16 0 25-8 25-22s-9-21-25-21h-30v43h30Z"/>
+  <text x="256" y="176" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="70" font-weight="800" fill="#166534">PSS</text>
 </svg>

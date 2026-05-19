@@ -1,5 +1,5 @@
-const CACHE_NAME = "site-management-v26";
-const ASSETS = ["./", "./index.html", "./styles.css", "./app.js?v=26", "./manifest.webmanifest", "./icon.svg"];
+const CACHE_NAME = "site-management-v27";
+const ASSETS = ["./", "./index.html", "./styles.css", "./app.js?v=27", "./manifest.webmanifest", "./icon.svg"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS)));

@@ -98,6 +98,11 @@ const els = {
   hasMotorcycle: document.querySelector("#site-has-motorcycle"),
   carFields: document.querySelector("#car-fields"),
   motorcycleFields: document.querySelector("#motorcycle-fields"),
+  featureContactlessPayment: document.querySelector("#feature-contactless-payment"),
+  featureLicensePlateRecognition: document.querySelector("#feature-license-plate-recognition"),
+  featureOnlinePayment: document.querySelector("#feature-online-payment"),
+  featureCashOnly: document.querySelector("#feature-cash-only"),
+  featureMonthlyRentOnly: document.querySelector("#feature-monthly-rent-only"),
 };
 
 const fieldIds = {
@@ -116,7 +121,6 @@ const fieldIds = {
   motorcycle_entrance_device_count: "site-motorcycle-entrance",
   motorcycle_exit_device_count: "site-motorcycle-exit",
   motorcycle_exit_payment_device_count: "site-motorcycle-exit-payment",
-  notes: "site-notes",
   remarks: "site-remarks",
 };
 
@@ -344,7 +348,7 @@ function renderDetail() {
       ${info("出口支付數量", site.exit_payment_device_count)}
       ${info("繳費機數量", site.payment_machine_count)}
       ${info("計價電腦數量", site.pricing_computer_count)}
-      ${info("注意事項", site.notes, true)}
+      ${info("功能開通", renderFeatureList(site), true, true)}
       ${info("備註", site.remarks, true)}
     </div>
     <div class="attachments">
@@ -513,11 +517,34 @@ async function callAdminUsers(action, payload) {
   return data;
 }
 
-function info(label, value, preline = false) {
+function getSiteFeatures(site) {
+  return [
+    [site.feature_contactless_payment, "無感支付"],
+    [site.feature_license_plate_recognition, "強建車號"],
+    [site.feature_online_payment, "線上繳費"],
+    [site.feature_cash_only, "純現金"],
+    [site.feature_monthly_rent_only, "純月租"],
+  ]
+    .filter(([enabled]) => enabled)
+    .map(([, label]) => label);
+}
+
+function renderFeatureList(site) {
+  const features = getSiteFeatures(site);
+  if (!features.length) return "未開通";
+  return `
+    <div class="feature-list">
+      ${features.map((feature) => `<span class="feature-pill">${escapeHtml(feature)}</span>`).join("")}
+    </div>
+  `;
+}
+
+function info(label, value, preline = false, raw = false) {
+  const content = raw ? value : escapeHtml(value ?? "未填");
   return `
     <div class="info-item ${preline ? "span-2" : ""}">
       <b>${label}</b>
-      <span class="${preline ? "preline" : ""}">${escapeHtml(value ?? "未填")}</span>
+      <span class="${preline ? "preline" : ""}">${content}</span>
     </div>
   `;
 }
@@ -626,12 +653,21 @@ function openForm(site = null) {
     exit_payment_device_count: 0,
     payment_machine_count: 0,
     pricing_computer_count: 0,
-    notes: "",
+    feature_contactless_payment: false,
+    feature_license_plate_recognition: false,
+    feature_online_payment: false,
+    feature_cash_only: false,
+    feature_monthly_rent_only: false,
     remarks: "",
   };
 
   els.hasCar.checked = Boolean(values.has_car);
   els.hasMotorcycle.checked = Boolean(values.has_motorcycle);
+  els.featureContactlessPayment.checked = Boolean(values.feature_contactless_payment);
+  els.featureLicensePlateRecognition.checked = Boolean(values.feature_license_plate_recognition);
+  els.featureOnlinePayment.checked = Boolean(values.feature_online_payment);
+  els.featureCashOnly.checked = Boolean(values.feature_cash_only);
+  els.featureMonthlyRentOnly.checked = Boolean(values.feature_monthly_rent_only);
 
   for (const [key, id] of Object.entries(fieldIds)) {
     $(id).value = values[key] ?? "";
@@ -669,7 +705,12 @@ function readForm() {
     exit_payment_device_count: Number($("site-exit-payment").value || 0),
     payment_machine_count: Number($("site-payment").value || 0),
     pricing_computer_count: Number($("site-pricing-computer").value || 0),
-    notes: $("site-notes").value.trim() || null,
+    feature_contactless_payment: els.featureContactlessPayment.checked,
+    feature_license_plate_recognition: els.featureLicensePlateRecognition.checked,
+    feature_online_payment: els.featureOnlinePayment.checked,
+    feature_cash_only: els.featureCashOnly.checked,
+    feature_monthly_rent_only: els.featureMonthlyRentOnly.checked,
+    notes: null,
     remarks: $("site-remarks").value.trim() || null,
   };
 }

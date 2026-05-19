@@ -1,6 +1,6 @@
 {
-  "name": "場地資料系統",
-  "short_name": "場地系統",
+  "name": "PSS 場地資料系統",
+  "short_name": "PSS 場地",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#f6f7f4",

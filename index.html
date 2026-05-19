@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#166534" />
-    <title>場地資料系統</title>
+    <title>PSS 場地資料系統</title>
     <link rel="manifest" href="./manifest.webmanifest" />
     <link rel="stylesheet" href="./styles.css" />
   </head>
@@ -12,9 +12,9 @@
     <div id="app" class="shell">
       <section class="auth-view" data-view="auth">
         <div class="brand">
-          <div class="brand-mark">場</div>
+          <div class="brand-mark">PSS</div>
           <div>
-            <h1>場地資料系統</h1>
+            <h1>PSS 場地資料系統</h1>
             <p>公司內部場地查詢與附件管理</p>
           </div>
         </div>
@@ -35,11 +35,14 @@
 
       <section class="app-view hidden" data-view="main">
         <header class="topbar">
-          <div>
+          <div class="topbar-brand">
+            <div class="brand-mark">PSS</div>
+            <div>
             <p class="eyebrow">場地資料</p>
-            <h1>案場總覽</h1>
+            <h1>PSS 場地資料系統</h1>
             <p id="profile-badge" class="profile-badge"></p>
             <p id="storage-usage" class="profile-badge"></p>
+            </div>
           </div>
           <div class="top-actions">
             <button id="manage-users-button" class="ghost hidden" type="button">建立者管理</button>
@@ -218,10 +221,31 @@
                   計價電腦數量
                   <select id="site-pricing-computer"></select>
                 </label>
-                <label class="span-2">
-                  注意事項
-                  <textarea id="site-notes" rows="4"></textarea>
-                </label>
+                <fieldset class="vehicle-box span-2">
+                  <legend>功能開通</legend>
+                  <div class="feature-grid">
+                    <label class="check-row">
+                      <input id="feature-contactless-payment" type="checkbox" />
+                      無感支付
+                    </label>
+                    <label class="check-row">
+                      <input id="feature-license-plate-recognition" type="checkbox" />
+                      強建車號
+                    </label>
+                    <label class="check-row">
+                      <input id="feature-online-payment" type="checkbox" />
+                      線上繳費
+                    </label>
+                    <label class="check-row">
+                      <input id="feature-cash-only" type="checkbox" />
+                      純現金
+                    </label>
+                    <label class="check-row">
+                      <input id="feature-monthly-rent-only" type="checkbox" />
+                      純月租
+                    </label>
+                  </div>
+                </fieldset>
                 <label class="span-2">
                   備註
                   <textarea id="site-remarks" rows="4"></textarea>
@@ -255,6 +279,6 @@
       </section>
     </div>
 
-    <script type="module" src="./app.js?v=26"></script>
+    <script type="module" src="./app.js?v=27"></script>
   </body>
 </html>

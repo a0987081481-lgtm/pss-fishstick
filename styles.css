@@ -153,6 +153,17 @@ textarea {
   max-width: 1180px;
 }
 
+.topbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.topbar .brand-mark {
+  flex: 0 0 auto;
+}
+
 .top-actions {
   display: flex;
   gap: 8px;
@@ -393,6 +404,27 @@ textarea {
   gap: 12px;
 }
 
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.feature-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.feature-pill {
+  border: 1px solid #b8d8c2;
+  border-radius: 999px;
+  padding: 4px 9px;
+  color: var(--brand-dark);
+  font-size: 13px;
+  font-weight: 750;
+}
+
 .span-2 {
   grid-column: span 2;
 }
@@ -561,7 +593,8 @@ textarea {
 
   .grid,
   .info-grid,
-  .vehicle-fields {
+  .vehicle-fields,
+  .feature-grid {
     grid-template-columns: 1fr;
   }
 
