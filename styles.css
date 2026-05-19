@@ -67,8 +67,16 @@ button:active {
   display: flex;
   gap: 14px;
   align-items: center;
-  width: min(420px, 100%);
+  width: min(520px, 100%);
   margin-bottom: 18px;
+}
+
+.brand-logo {
+  display: block;
+  width: 112px;
+  max-width: 34vw;
+  height: auto;
+  flex: 0 0 auto;
 }
 
 .brand-mark {
@@ -160,8 +168,13 @@ textarea {
   min-width: 0;
 }
 
+.topbar .brand-logo,
 .topbar .brand-mark {
   flex: 0 0 auto;
+}
+
+.topbar .brand-logo {
+  width: 118px;
 }
 
 .top-actions {
