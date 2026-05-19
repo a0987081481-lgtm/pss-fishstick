@@ -172,6 +172,16 @@ textarea {
   font-size: 13px;
 }
 
+.storage-warning {
+  color: #a15c00;
+  font-weight: 750;
+}
+
+.storage-danger {
+  color: var(--danger);
+  font-weight: 800;
+}
+
 .toolbar input {
   flex: 1;
 }
@@ -269,6 +279,40 @@ textarea {
   color: var(--muted);
   font-size: 13px;
   line-height: 1.35;
+}
+
+.site-card span b {
+  display: inline-block;
+  min-width: 58px;
+  color: var(--ink);
+  font-weight: 750;
+}
+
+.site-card-top {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 7px;
+}
+
+.site-card-top strong {
+  margin-bottom: 0;
+}
+
+.site-code {
+  display: inline-flex !important;
+  flex: 0 0 auto;
+  max-width: 46%;
+  border: 1px solid #b8d8c2;
+  border-radius: 999px;
+  padding: 3px 8px;
+  color: var(--brand-dark) !important;
+  font-size: 12px !important;
+  font-weight: 800;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .owner-card {
@@ -446,8 +490,36 @@ textarea {
     flex-direction: column;
   }
 
+  .top-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
   .layout {
     grid-template-columns: 1fr;
+  }
+
+  .site-list {
+    gap: 10px;
+    padding: 10px;
+  }
+
+  .site-card {
+    min-height: 0;
+    padding: 12px 13px;
+  }
+
+  .site-card-top {
+    align-items: center;
+  }
+
+  .site-card-top strong {
+    font-size: 16px;
+  }
+
+  .site-card span {
+    font-size: 12px;
+    line-height: 1.45;
   }
 
   .list-panel,

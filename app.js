@@ -167,6 +167,8 @@ async function renderStorageUsage() {
   const remainingBytes = Math.max(quotaBytes - usedBytes, 0);
   const percent = Math.min((usedBytes / quotaBytes) * 100, 100);
 
+  els.storageUsage.classList.toggle("storage-warning", percent >= 75 && percent < 90);
+  els.storageUsage.classList.toggle("storage-danger", percent >= 90);
   els.storageUsage.textContent = `容量：已用 ${formatStorage(usedBytes)} / 1GB，剩餘約 ${formatStorage(
     remainingBytes
   )}（${percent.toFixed(1)}%）`;
@@ -263,11 +265,13 @@ function renderSites() {
     button.type = "button";
     button.className = `site-card ${site.id === state.selectedSiteId ? "active" : ""}`;
     button.innerHTML = `
-      <strong>建立者：${escapeHtml(getOwnerName(site.created_by))}</strong>
-      <span>場地代號：${escapeHtml(site.code)}</span>
-      <span>場地名稱：${escapeHtml(site.name)}</span>
-      <span>建立時間：${formatDateTime(site.created_at)}</span>
-      <span>${escapeHtml(site.address)}</span>
+      <div class="site-card-top">
+        <strong>${escapeHtml(site.name)}</strong>
+        <span class="site-code">${escapeHtml(site.code)}</span>
+      </div>
+      <span><b>建立者</b>${escapeHtml(getOwnerName(site.created_by))}</span>
+      <span><b>建立時間</b>${formatDateTime(site.created_at)}</span>
+      <span><b>地址</b>${escapeHtml(site.address)}</span>
     `;
     button.addEventListener("click", () => selectSite(site.id));
     els.siteList.append(button);
@@ -715,11 +719,17 @@ async function uploadMany(site, fileList, kind) {
   }
 
   try {
+    const summaries = [];
     for (const file of files) {
-      await uploadOne(site, file, kind);
+      const summary = await uploadOne(site, file, kind);
+      if (summary) summaries.push(summary);
     }
     await loadAttachments(site.id);
     openForm(site);
+    const refreshedMessage = document.querySelector("#upload-message");
+    if (refreshedMessage && summaries.length) {
+      refreshedMessage.textContent = summaries.join("；");
+    }
   } catch (error) {
     uploadMessage.textContent = error.message;
   }
@@ -756,6 +766,12 @@ async function uploadOne(site, file, kind) {
 
   const { error: insertError } = await supabase.from(table).insert(payload);
   if (insertError) throw insertError;
+
+  if (kind === "photos") {
+    return `${file.name}：${formatBytes(file.size)} -> ${formatBytes(uploadFile.size)}`;
+  }
+
+  return "";
 }
 
 async function preparePhoto(file) {
