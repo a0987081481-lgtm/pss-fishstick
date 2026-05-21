@@ -2,7 +2,10 @@ tools/
 .supabase/
 supabase/.branches/
 supabase/.temp/
+transfer-export/
+transfer-package/
 *.tar.gz
+*.zip
 
 # Local scratch and one-off SQL notes
 supabase-fix-sites-insert.sql
