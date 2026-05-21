@@ -19,11 +19,18 @@ Deno.serve(async (request) => {
 
     for (const event of events) {
       const text = event?.message?.type === "text" ? String(event.message.text).trim() : "";
-      const groupId = event?.source?.groupId;
+      const sourceType = event?.source?.type;
+      const sourceId = event?.source?.groupId || event?.source?.roomId || event?.source?.userId;
       const replyToken = event?.replyToken;
 
-      if (text === "取得群組ID" && groupId && replyToken) {
-        await replyToLine(replyToken, `這個 LINE 群組 ID 是：\n${groupId}\n\n請把這段 groupId 存到 Supabase Secret：LINE_GROUP_ID`);
+      if (text === "取得群組ID" && replyToken) {
+        const label = sourceType === "group" ? "群組 ID" : sourceType === "room" ? "多人聊天室 ID" : "使用者 ID";
+        const hint =
+          sourceType === "group" || sourceType === "room"
+            ? "請把這段 ID 存到 Supabase Secret：LINE_GROUP_ID"
+            : "我有收到訊息，但這裡是一對一聊天室。請把我加入 LINE 群組後，在群組裡再打一次「取得群組ID」。";
+
+        await replyToLine(replyToken, `這個 LINE ${label} 是：\n${sourceId || "未取得"}\n\n${hint}`);
       }
     }
 
