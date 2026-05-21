@@ -842,6 +842,7 @@ async function saveSite(event) {
   els.formMessage.textContent = "";
 
   const id = $("site-id").value;
+  const isNewSite = !id;
   const payload = readForm();
 
   let result;
@@ -868,7 +869,29 @@ async function saveSite(event) {
   state.selectedSiteId = result.data.id;
   await loadSites();
   await loadAttachments(result.data.id);
+  if (isNewSite) {
+    notifyLineSiteCreated(result.data);
+  }
   renderDetail();
+}
+
+async function notifyLineSiteCreated(site) {
+  try {
+    const { error } = await supabase.functions.invoke("notify-line", {
+      body: {
+        type: "site_created",
+        site: {
+          id: site.id,
+          name: site.name,
+          code: site.code,
+          created_at: site.created_at,
+        },
+      },
+    });
+    if (error) throw error;
+  } catch (error) {
+    console.warn("LINE notification failed", error);
+  }
 }
 
 async function uploadMany(site, fileList, kind) {
